@@ -1,0 +1,4 @@
+**/.vs
+backend/AInterviewer/AInterviewer/obj
+backend/AInterviewer/AInterviewer/appsettings.json
+compose.yaml
