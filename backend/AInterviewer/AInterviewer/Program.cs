@@ -1,7 +1,11 @@
 using AInterviewer.Data;
+using AInterviewer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.AI;
 using Microsoft.IdentityModel.Tokens;
+using OpenAI;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,8 +24,8 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issaer"],
-        ValidAudience = builder.Configuration["Jwt:Aadience"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
     options.Events = new JwtBearerEvents
@@ -58,6 +62,25 @@ builder.Services.AddCors(options => {
     });
 });
 
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IInterviewService, InterviewService>();
+builder.Services.AddScoped<IAiInterviewService, AiInterviewService>();
+
+
+
+builder.Services.AddSingleton<IChatClient>(sp =>
+{
+    var httpClient = new HttpClient();
+
+    return new YandexGptChatClient(
+        httpClient,
+        builder.Configuration["YandexGPT:ApiKey"]!,
+        builder.Configuration["YandexGPT:FolderId"]!);
+});
+
+// =================================
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -70,15 +93,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-
 {
     using var scope = app.Services.CreateScope();
-
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
     db.Database.Migrate();
 }
 

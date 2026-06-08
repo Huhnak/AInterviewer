@@ -6,9 +6,9 @@ public class User
     public string Username { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
 
     public Role Role { get; set; }
-    //ICollection<123> = new List<123>();
+    public ICollection<Interview> Interviews = new List<Interview>();
 }

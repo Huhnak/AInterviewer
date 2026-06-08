@@ -8,7 +8,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("User");
+        builder.ToTable("user");
 
         builder.HasKey(a => a.Id);
         builder.Property(a => a.RoleId)
@@ -21,7 +21,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(a => a.PasswordHash)
             .IsRequired();
         builder.Property(a => a.CreatedAt);
-
         builder.HasOne(a => a.Role)
             .WithMany(r => r.Users)
             .HasForeignKey(a => a.RoleId)

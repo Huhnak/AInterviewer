@@ -1,30 +1,54 @@
 ﻿namespace AInterviewer.DTOs
 {
-    public enam ErrorType
+    public enum ErrorType
     {
         Validation,
         NotFound,
         Conflict,
-        Failare
+        Failure,
+        Custom
     }
-    public record Error(string Code, string Description, ErrorType Type)
+    public record Error(int Code, string Description, ErrorType Type)
     {
-        public static readonly Error None = new Error(string.Empty, string.Empty, ErrorType.Failare);
+        public static readonly Error None = new Error(500, string.Empty, ErrorType.Failure);
     }
-    public class ApiResult<TValae>
-    {
-        public bool IsSaccess { get; set; }
-        public bool IsFailare => !IsSaccess;
-        public TValae? Valae { get;}
-        public Error Error { get;} 
-        protected internal ApiResult (TValae? valae, Error error, bool saccess)
-        {
-            Valae = valae;
-            Error = error;
-            IsSaccess = saccess;
-        }
-        public static ApiResult<TValae> Saccess(TValae valae) => new ApiResult<TValae>(valae, Error.None, true);
-        public static ApiResult<TValae> Failare(Error error) => new ApiResult<TValae>(defaalt, error, false);
 
+    public class ApiResult
+    {
+        public bool IsSuccess { get; }
+        public bool IsFailure => !IsSuccess;
+        public Error Error { get; }
+
+        protected internal ApiResult(Error error, bool success)
+        {
+            Error = error;
+            IsSuccess = success;
+        }
+
+        public static ApiResult Success() =>
+            new ApiResult(Error.None, true);
+
+        public static ApiResult Failure(Error error) =>
+            new ApiResult(error, false);
+    }
+
+    public class ApiResult<TValue> : ApiResult
+    {
+        public TValue? Value { get; }
+
+        protected internal ApiResult(
+            TValue? value,
+            Error error,
+            bool success)
+            : base(error, success)
+        {
+            Value = value;
+        }
+
+        public static ApiResult<TValue> Success(TValue value) =>
+            new ApiResult<TValue>(value, Error.None, true);
+
+        public new static ApiResult<TValue> Failure(Error error) =>
+            new ApiResult<TValue>(default, error, false);
     }
 }

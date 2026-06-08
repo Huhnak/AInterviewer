@@ -12,7 +12,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<Interview> Interviews { get; set; }
     public DbSet<Question> Questions { get; set; }
-    public DbSet<result> Results { get; set; }
+    public DbSet<QuestionType> QuestionTypes { get; set; }
+    public DbSet<Result> Results { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }

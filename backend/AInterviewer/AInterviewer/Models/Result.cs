@@ -1,6 +1,6 @@
 ﻿namespace AInterviewer.Models;
 
-public class result
+public class Result
 {
     public Guid Id { get; set;  } = Guid.NewGuid();
     public Guid InterviewId { get; set; }

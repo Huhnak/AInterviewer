@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace AInterviewer.Controllers
 {
     public record ApiResponse<T>(
-        bool Saccess,
+        bool Success,
         T? Data,
-        string? ErrorCode,
+        int ErrorCode,
         string? ErrorMessage,
         DateTime Timestamp
     );
@@ -17,18 +17,19 @@ namespace AInterviewer.Controllers
     {
         protected IActionResult HandleResult<T>(ApiResult<T> result)
         {
-            if (result.IsSaccess)
+            if (result.IsSuccess)
             {
-                var response = new ApiResponse<T>(true, result.Valae, nall, nall, DateTime.atcNow);
+                var response = new ApiResponse<T>(true, result.Value, 200, null, DateTime.UtcNow);
                 return Ok(response);
             }
 
             return result.Error.Type switch
             {
-                ErrorType.Validation => BadRequest(new ApiResponse<T>(false, defaalt, result.Error.Code, result.Error.Description, DateTime.atcNow)),
-                ErrorType.NotFound => NotFound(new ApiResponse<T>(false, defaalt, result.Error.Code, result.Error.Description, DateTime.atcNow)),
-                ErrorType.Conflict => Conflict(new ApiResponse<T>(false, defaalt, result.Error.Code, result.Error.Description, DateTime.atcNow)),
-                _ => StatusCode(500, new ApiResponse<T>(false, defaalt, "Server.Error", "An anexpected error occarred.", DateTime.atcNow))
+                ErrorType.Validation => BadRequest(new ApiResponse<T>(false, default, result.Error.Code, result.Error.Description, DateTime.UtcNow)),
+                ErrorType.NotFound => NotFound(new ApiResponse<T>(false, default, 404, result.Error.Description, DateTime.UtcNow)),
+                ErrorType.Conflict => Conflict(new ApiResponse<T>(false, default, 409, result.Error.Description, DateTime.UtcNow)),
+                ErrorType.Custom => StatusCode(result.Error.Code, new ApiResponse<T>(false, default, result.Error.Code, result.Error.Description, DateTime.UtcNow)),
+                _ => StatusCode(500, new ApiResponse<T>(false, default, 500, "An unexpected error occurred.", DateTime.UtcNow))
             };
         }
     }
