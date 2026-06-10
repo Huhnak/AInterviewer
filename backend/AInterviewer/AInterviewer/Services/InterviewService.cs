@@ -97,7 +97,6 @@ public class InterviewService : IInterviewService
         ,ct);
         _context.Results.Add(new Result()
         {
-            CompletedAt = DateTime.UtcNow,
             CorrectAnswers = interviewResult.CorrectAnswers,
             InterviewId = interview.Id,
             Recomendations = interviewResult.Recomendations,
@@ -171,9 +170,9 @@ public class InterviewService : IInterviewService
                 i.DifficultyLevel,
                 i.CreatedAt,
                 i.Status.ToString(),
-                i.Result.TotalScore
+                i.Result != null ? i.Result.TotalScore : 0
             ))
-            .ToListAsync(ct);
+         .ToListAsync(ct);
         return ApiResult<List<InterviewDto>>.Success(interviews);
     }
 

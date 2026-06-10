@@ -20,7 +20,6 @@ public class ResultConfiguration : IEntityTypeConfiguration<Result>
         builder.Property(r => r.Strengths);
         builder.Property(r => r.Weaknesses);
         builder.Property(r => r.Recomendations);
-        builder.Property(r => r.CompletedAt);
         builder.HasOne(r => r.Interview)
             .WithOne(i => i.Result)
             .HasForeignKey<Result>(r => r.InterviewId)

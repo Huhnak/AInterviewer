@@ -53,12 +53,17 @@ public record AnswerEvaluationDto(
     string Feedback
 );
 
-public record InterviewResultDto(
-    int TotalScore,
-    int CorrectAnswers,
-    int TotalAnswers,
-    string Level,
-    string Strengths,
-    string Weaknesses,
-    string Recomendations
-);
+public class InterviewResultDto
+{
+    public int TotalScore { get; set; }
+    public int CorrectAnswers { get; set; }
+    public int TotalAnswers { get; set; }
+    [JsonPropertyName("level")]
+    public string Level { get; set; } = string.Empty;
+    [JsonPropertyName("strengths")]
+    public string Strengths { get; set; } = string.Empty;
+    [JsonPropertyName("weaknesses")]
+    public string Weaknesses { get; set; } = string.Empty;
+    [JsonPropertyName("recomendations")]
+    public string Recomendations { get; set; } = string.Empty;
+}

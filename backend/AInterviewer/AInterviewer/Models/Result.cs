@@ -11,7 +11,6 @@ public class Result
     public string Strengths { get; set; } = string.Empty;
     public string Weaknesses{ get; set; } = string.Empty;
     public string Recomendations{ get; set; } = string.Empty;
-    public DateTime CompletedAt { get; set; }
 
 
     public Interview Interview { get; set; }

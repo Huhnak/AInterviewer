@@ -207,21 +207,22 @@ public class AiInterviewService : IAiInterviewService
         Верни JSON:
 
         {
-            "grade": "",
             "recomendations": "",
             "level": "",
-            "strengths": [],
-            "weaknesses": []
+            "strengths": "",
+            "weaknesses": ""
         }
         recomendations - рекомендации по улучшению навыков кандидата.
-        level - предполагаемый уровень кандидата (Junior, Junior+, Middle, Middle+, Senior).
+        level - предполагаемый уровень кандидата (Junior, Junior+, Middle, Middle+, Senior и тд., если уровень слишком низний то Begginer).
         """;
         var response = await SendPromptAsync(
                 prompt,
                 ct);
         var result = JsonSerializer.Deserialize<InterviewResultDto>(
             response)!;
-        result = result with { TotalScore = totalScore, TotalAnswers = answers.Count(), CorrectAnswers = answers.Count(a => a.Score >= 60) };
+        result.TotalScore = totalScore;
+        result.TotalAnswers = answers.Count();
+        result.CorrectAnswers = answers.Count(a => a.Score >= 60);
         return result;
     }
 
