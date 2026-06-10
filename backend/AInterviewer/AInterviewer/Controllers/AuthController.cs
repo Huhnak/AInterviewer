@@ -20,7 +20,7 @@ public class AuthController : ApiControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] UserLoginDto user, CancellationToken ct)
+    public async Task<ActionResult<string>> Login([FromBody] UserLoginDto user, CancellationToken ct)
     {
         ApiResult<string> result = await _authService.LoginAsync(user, ct);
         if (result.IsFailure)

@@ -16,7 +16,7 @@ public class InterviewController : ApiControllerBase
         _interviewService = interviewService;
     }
     [HttpPost("create")]
-    public async Task<IActionResult> Create([FromBody] InterviewCreateRequest request, CancellationToken ct)
+    public async Task<ActionResult<Guid>> Create([FromBody] InterviewCreateRequest request, CancellationToken ct)
     {
         var result = await _interviewService.CreateAsync(request, HttpContext, ct);
         if(result.IsFailure)
@@ -24,7 +24,7 @@ public class InterviewController : ApiControllerBase
         return Ok(result.Value);
     }
     [HttpGet("list")]
-    public async Task<IActionResult> GetMyInterviews(CancellationToken ct)
+    public async Task<ActionResult<List<InterviewDto>>> GetMyInterviews(CancellationToken ct)
     {
         var result = await _interviewService.GetMyInterviewsAsync(HttpContext, ct);
         if (result.IsFailure)
@@ -32,7 +32,7 @@ public class InterviewController : ApiControllerBase
         return Ok(result.Value);
     }
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
+    public async Task<ActionResult<InterviewDto>> GetById(Guid id, CancellationToken ct)
     {
         var result = await _interviewService.GetInterviewByIdAsync(id, HttpContext, ct);
         if (result.IsFailure)
@@ -48,7 +48,7 @@ public class InterviewController : ApiControllerBase
         return Ok();
     }
     [HttpGet("{id}/current-question")]
-    public async Task<IActionResult> GetCurrentQuestion(Guid id, CancellationToken ct)
+    public async Task<ActionResult<QuestionDto>> GetCurrentQuestion(Guid id, CancellationToken ct)
     {
         var result = await _interviewService.GetCurrentQuestionAsync(id, HttpContext, ct);
         if (result.IsFailure)
@@ -74,7 +74,7 @@ public class InterviewController : ApiControllerBase
         return Ok();
     }
     [HttpGet("{id}/result")]
-    public async Task<IActionResult> GetResult(Guid id, CancellationToken ct)
+    public async Task<ActionResult<ResultDto>> GetResult(Guid id, CancellationToken ct)
     {
         var result = await _interviewService.InterviewResultAsync(id, HttpContext, ct);
         if (result.IsFailure)

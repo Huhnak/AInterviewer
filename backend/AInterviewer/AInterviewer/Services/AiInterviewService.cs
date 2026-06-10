@@ -141,7 +141,7 @@ public class AiInterviewService : IAiInterviewService
         var sb = new StringBuilder();
         foreach (var qa in questionsAnswers)
         {
-            sb.AppendLine($"Question topic: {qa.Key.Topic}\nQuestion content: {qa.Key.Content}\nQuestion difficulty: {qa.Key.Difficulty}\nAnswer: {qa.Value}\n");
+            sb.AppendLine($"Question id: {qa.Key.Id}\nQuestion topic: {qa.Key.Topic}\nQuestion content: {qa.Key.Content}\nQuestion difficulty: {qa.Key.Difficulty}\nAnswer: {qa.Value}\n");
         }
 
         var prompt = $$"""
@@ -155,26 +155,29 @@ public class AiInterviewService : IAiInterviewService
         Вопросы и ответы кандидата:
         {{sb.ToString()}}
 
-        Оцени ответы от 0 до 100.
+        Оцени каждый ответ по шкале от 0 до 100.
+        Дай короткий отзыв по ответу.
 
         Верни JSON:
         [
             {
+                "id": "",
                 "score": 0,
                 "feedback": ""
             },
             {
+                "id": "",
                 "score": 0,
                 "feedback": ""
             },
             {
+                "id": "",
                 "score": 0,
                 "feedback": ""
             },
         ]
 
         """;
-
         var response = await SendPromptAsync(
             prompt,
             ct);

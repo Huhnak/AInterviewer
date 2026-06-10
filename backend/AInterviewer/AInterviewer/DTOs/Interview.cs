@@ -7,7 +7,7 @@ namespace AInterviewer.DTOs;
 public record InterviewCreateRequest
 (
     string CategoryName,
-    string DifficultyLevel
+    int DifficultyLevel
 );
 public record SubmitAnswerDto
 (
@@ -23,7 +23,9 @@ public record InterviewDto
     int DifficultyLevel,
     DateTime CreatedAt,
     string Status,
-    int Score
+    int Score,
+    int  CurrentQuestionIndex,
+    int MaxQuestions
 );
 public record QuestionDto
 (
@@ -36,6 +38,8 @@ public record QuestionDto
 );
 public class GeneratedQuestionDto
 {
+    [JsonPropertyName("id")]
+    public Guid Id { get; set; }
     [JsonPropertyName("topic")]
     public string Topic { get; set; } = "";
     [JsonPropertyName("content")]
@@ -48,10 +52,15 @@ public record AnswerEvaluationAndSuggestionDto(
     string Feedback,
     string SuggestedNextTopic
 );
-public record AnswerEvaluationDto(
-    int Score,
-    string Feedback
-);
+public class AnswerEvaluationDto
+{
+    [JsonPropertyName("id")]
+    public Guid Id { get; set; }
+    [JsonPropertyName("score")]
+    public int Score { get; set; }
+    [JsonPropertyName("feedback")]
+    public string Feedback { get; set; } = string.Empty;
+}
 
 public class InterviewResultDto
 {
@@ -67,3 +76,13 @@ public class InterviewResultDto
     [JsonPropertyName("recomendations")]
     public string Recomendations { get; set; } = string.Empty;
 }
+public record ResultDto(
+    Guid Id,
+    int TotalScore,
+    int CorrectAnswers,
+    int TotalAnswers,
+    string Level,
+    string Strengths,
+    string Weaknesses,
+    string Recomendations
+);

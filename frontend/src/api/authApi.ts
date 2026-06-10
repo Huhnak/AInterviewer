@@ -1,14 +1,10 @@
-import axios from "axios";
-
-const API = axios.create({
-  baseURL: "/api",
-});
+import api from "./axios";
 
 export const login = async (
   username: string,
   password: string
 ) => {
-  const response = await API.post("/auth/login", {
+  const response = await api.post("/api/auth/login", {
     username,
     password,
   });
