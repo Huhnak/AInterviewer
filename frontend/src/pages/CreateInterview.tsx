@@ -1,51 +1,98 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { generateInterview, startInterview } from "../api/interviewApi";
+import {
+    generateInterview,
+    getCategories,
+    startInterview,
+} from "../api/interviewApi";
+import type { Category } from "../types/interview";
+import { useThemeStore } from "../store/themeStore";
+import ValuePickerSlider from "../components/ValuePickerSlider";
 
 function CreateInterview() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+    const [isStartingInterview, setIsStartingInterview] = useState(false);
+    const [categoryName, setCategoryName] = useState<string>();
+    const [categories, setCategories] = useState<Category[] | null>(null);
+    const { isDarkMode } = useThemeStore();
 
-  const [category, setCategory] =
-    useState("Программирование на С#");
+    const [difficulty, setDifficulty] = useState(10);
 
-  const [difficulty] =
-    useState(10);
+    useEffect(() => {
+        getCategories().then((res) => {
+            setCategories(res);
+            setCategoryName(res.at(0)?.name);
+            setIsLoadingCategories(false);
+        });
+    }, []);
 
-  const createInterview = async () => {
+    const createInterview = async () => {
+        const interviewId = await generateInterview(
+            categoryName ?? "",
+            difficulty * 10,
+        );
+        setIsStartingInterview(true);
+        await startInterview(interviewId);
+        navigate(`/interview/${interviewId}`);
+    };
 
-    const interviewId = await generateInterview(category, difficulty);
-    await startInterview(interviewId);
-    navigate(
-      `/interview/${interviewId}`
+    return (
+        <div className="mx-auto max-w-3xl py-12">
+            <div className="bg-card/60 rounded-3xl border border-white/10 p-8 shadow-2xl backdrop-blur-xl">
+                <div className="mb-8">
+                    <h1 className="mb-2 text-4xl font-bold">
+                        Создать интервью
+                    </h1>
+
+                    <p className="text-muted">
+                        Выберите направление, по которому AI будет проводить
+                        собеседование.
+                    </p>
+                </div>
+
+                <div className="space-y-6">
+                    <div>
+                        <label className="text-muted mb-2 block text-sm font-medium">
+                            Направление
+                        </label>
+                        <select
+                            value={categoryName}
+                            onChange={(e) => setCategoryName(e.target.value)}
+                            disabled={
+                                isLoadingCategories || isStartingInterview
+                            }
+                            className={`${(isLoadingCategories || isStartingInterview) && "opacity-50"} bg-surface focus:border-primary focus:ring-primary/30 w-full rounded-2xl border border-white/10 px-4 py-4 transition-all outline-none focus:ring-2`}
+                        >
+                            {categories?.map((c) => (
+                                <option key={c.id}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <ValuePickerSlider
+                            min={1}
+                            max={10}
+                            step={1}
+                            label="Сложность собеседования"
+                            value={difficulty}
+                            onChange={setDifficulty}
+                        />
+                    </div>
+
+                    <button
+                        onClick={createInterview}
+                        disabled={isLoadingCategories || isStartingInterview}
+                        className={`${(isLoadingCategories || isStartingInterview) && "cursor-default opacity-50 hover:scale-[1]"} ${isDarkMode ? "bg-primary" : "bg-background"} hover:shadow-primary/30 w-full rounded-2xl bg-gradient-to-r py-4 font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg`}
+                    >
+                        {isStartingInterview
+                            ? "Интервью начинается..."
+                            : "Начать интервью"}
+                    </button>
+                </div>
+            </div>
+        </div>
     );
-  };
-
-  return (
-    <div className="p-8">
-
-      <h1 className="text-2xl mb-4">
-        New Interview
-      </h1>
-
-      <select
-        value={category}
-        onChange={(e) =>
-          setCategory(e.target.value)
-        }
-      >
-        <option>Программирование на С#</option>
-        <option>React</option>
-        <option>Java</option>
-      </select>
-
-      <button
-        onClick={createInterview}
-        className="ml-4 bg-black text-white px-4 py-2"
-      >
-        Create
-      </button>
-    </div>
-  );
 }
 
 export default CreateInterview;

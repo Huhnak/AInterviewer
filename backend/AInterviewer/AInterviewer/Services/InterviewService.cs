@@ -39,28 +39,47 @@ public class InterviewService : IInterviewService
     public async Task<ApiResult> FinishInterviewAsync(Guid Id, HttpContext httpContext, CancellationToken ct)
     {
         var userId = GetUserId(httpContext);
-        Interview? interview = await _context.Interviews
-            .Include(i => i.Category)
-            .FirstOrDefaultAsync(i => i.Id == Id, ct);
-        if (interview is null)
-            return ApiResult.Failure(new Error(404, "Interview not found.", ErrorType.NotFound));
-        if (interview.UserId != userId)
-            return ApiResult.Failure(new Error(400, "This is not your interview.", ErrorType.Failure));
-        if (interview.Status != InterviewStatus.InProgress)
-            return ApiResult.Failure(new Error(400, "This interview is not in progress.", ErrorType.Failure));
-
-        var exists = await _context.Results.AnyAsync(r => r.InterviewId == interview.Id, ct);
-        if (exists) return ApiResult.Failure(new Error(400, "The result already exist.", ErrorType.Failure));
-
 
         await using var transaction = await _context.Database.BeginTransactionAsync(ct);
 
+        var interview = await _context.Interviews
+        .FromSqlInterpolated($@"
+            SELECT * FROM ""interview""
+            WHERE ""Id"" = {Id}
+            FOR UPDATE
+        ")
+        .Include(i => i.Category)
+        .Include(i=>i.Result)
+        .FirstOrDefaultAsync(ct);
+
+
+        if (interview is null)
+        {
+            await transaction.CommitAsync(ct);
+            return ApiResult.Failure(new Error(404, "Interview not found.", ErrorType.NotFound));
+        }
+        if (interview.UserId != userId)
+        {
+            await transaction.RollbackAsync(ct);
+            return ApiResult.Failure(new Error(400, "This is not your interview.", ErrorType.Failure));
+        }
+        if (interview.Status != InterviewStatus.InProgress)
+        {
+            await transaction.CommitAsync(ct);
+            return interview.Status == InterviewStatus.Completed
+                ? ApiResult.Success()
+                : ApiResult.Failure(new Error(400, "Invalid interview status.", ErrorType.Failure));
+        }
+
+
         try
         {
+           
             var questions = await _context.Questions
-            .Include(q => q.Answer)
-            .Where(q => q.InterviewId == interview.Id)
-            .ToListAsync(ct);
+                .Include(q => q.Answer)
+                .Where(q => q.InterviewId == interview.Id)
+                .AsNoTracking()
+                .ToListAsync(ct);
             var missingAnswers = new List<Answer>();
             foreach (var question in questions)
             {
@@ -78,9 +97,7 @@ public class InterviewService : IInterviewService
             if (missingAnswers.Any())
             {
                 await _context.Answers.AddRangeAsync(missingAnswers, ct);
-                await _context.SaveChangesAsync(ct);
             }
-            await _context.Entry(interview).ReloadAsync(ct);
             List<KeyValuePair<GeneratedQuestionDto, string>> questionsAnswers = await _context.Questions
                 .Include(q => q.Answer)
                 .Where(q => q.InterviewId == interview.Id)
@@ -90,7 +107,8 @@ public class InterviewService : IInterviewService
                         {
                             Content = q.Content,
                             Difficulty = q.Difficulty,
-                            Topic = q.Topic
+                            Topic = q.Topic,
+                            Id = q.Id
                         },
                         q.Answer.Content
                     )
@@ -104,20 +122,15 @@ public class InterviewService : IInterviewService
                 .ToListAsync(ct);
             foreach (var ae in answerEvaulations)
             {
-                var answer = answers.FirstOrDefault(a => a.Id == ae.Id);
+                var answer = answers.FirstOrDefault(a => a.QuestionId == ae.Id);
                 if (answer != null)
                 {
                     answer.Score = ae.Score;
                     answer.Feedback = ae.Feedback;
                 }
             }
-            await _context.SaveChangesAsync(ct);
 
-            var answersQuery = _context.Answers
-                .Include(a => a.Question)
-                .Where(a => a.Question.InterviewId == interview.Id);
-
-            var interviewResult = await _aiService.GenerateResultAsync(interview, answersQuery, ct);
+            var interviewResult = await _aiService.GenerateResultAsync(interview, answers, ct);
             var result = new Result
             {
                 CorrectAnswers = interviewResult.CorrectAnswers,
@@ -130,22 +143,34 @@ public class InterviewService : IInterviewService
                 Level = interviewResult.Level,
             };
 
-            interview.Result = result;
             interview.Status = InterviewStatus.Completed;
             interview.FinishedAt = DateTime.UtcNow;
+            _context.Results.Add(result);
 
-            _context.Entry(interview).Property(i => i.Status).OriginalValue = InterviewStatus.InProgress;
+          
+            var existingResult = await _context.Results
+                .AsNoTracking()
+                .FirstOrDefaultAsync(r => r.InterviewId == interview.Id);
+
             await _context.SaveChangesAsync(ct);
 
             await transaction.CommitAsync(ct);
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            await transaction.RollbackAsync(ct);
-            return ApiResult.Failure(new Error(409, $"{ex.StackTrace}The interview was already completed by another request.", ErrorType.Conflict));
+            foreach (var entry in ex.Entries)
+            {
+                _logger.LogError(
+                    "Conflict Entity={Entity}, State={State}",
+                    entry.Entity.GetType().Name,
+                    entry.State);
+            }
+
+            throw;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex.Message);
             await transaction.RollbackAsync(ct);
             throw;
         }
@@ -197,6 +222,12 @@ public class InterviewService : IInterviewService
         if (interviewDto == null)
             return ApiResult<InterviewDto>.Failure(new Error(400, "No such interview or not your interview.", ErrorType.Failure));
         return ApiResult<InterviewDto>.Success(interviewDto);
+    }
+
+    public async Task<ApiResult<List<Category>>> GetInterviewCategories(HttpContext httpContext, CancellationToken ct)
+    {
+        var result = await _context.Categories.ToListAsync(ct);
+        return ApiResult<List<Category>>.Success(result);
     }
 
     public async Task<ApiResult<List<InterviewDto>>> GetMyInterviewsAsync(HttpContext httpContext, CancellationToken ct)
@@ -318,7 +349,7 @@ public class InterviewService : IInterviewService
         return ApiResult.Success();
 
     }
-    
+
     private Guid GetUserId(HttpContext httpContext)
     {
         return Guid.Parse(httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);

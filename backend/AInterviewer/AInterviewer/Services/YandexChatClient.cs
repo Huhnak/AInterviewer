@@ -54,7 +54,6 @@ public sealed class YandexGptChatClient : IChatClient
             WriteIndented = true
         });
 
-        Console.WriteLine(requestJson);
         var response = await _httpClient.PostAsync(
             "https://llm.api.cloud.yandex.net/foundationModels/v1/completion",
             new StringContent(

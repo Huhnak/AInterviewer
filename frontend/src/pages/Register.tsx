@@ -1,50 +1,42 @@
-import { useEffect, useState } from "react";
-import { login } from "../api/authApi";
+import { useState } from "react";
+import { register } from "../api/authApi";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/userStore";
 
-function Login() {
+export default function Register() {
     const navigate = useNavigate();
-    const authStore = useAuthStore();
 
+    const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
     const [isLoading, setIsLoading] = useState(false);
-    const logout = () => {
-        authStore.logout();
-    };
-    const handleLogin = async () => {
+
+    const handleRegister = async () => {
         if (isLoading) return;
         try {
             setIsLoading(true);
-            const data = await login(username, password);
-            authStore.login(
-                {
-                    email: data.email,
-                    id: data.email,
-                    username: data.username,
-                    roleName: data.roleName,
-                },
-                data.token,
-            );
-            navigate("/home");
-        } catch (err) {
-            console.log(err);
+            await register(username, email, password);
+            navigate("/login");
+        } catch (e) {
+            console.log(e);
         } finally {
             setIsLoading(false);
         }
     };
-    useEffect(() => {
-        logout();
-    }, []);
+
     return (
         <div className="flex min-h-[85vh] items-center justify-center">
             <div className="bg-card/60 w-full max-w-md rounded-3xl border border-white/10 p-8 shadow-2xl backdrop-blur-xl">
                 <h1 className="mb-2 text-4xl font-bold">AInterviewer</h1>
 
-                <p className="text-muted mb-8">Войдите в систему</p>
+                <p className="text-muted mb-8">Зарегистрируйтесь</p>
 
+                <input
+                    className="bg-surface focus:border-primary mb-4 w-full rounded-2xl border border-white/10 p-4 transition outline-none"
+                    placeholder="Почта"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
                 <input
                     className="bg-surface focus:border-primary mb-4 w-full rounded-2xl border border-white/10 p-4 transition outline-none"
                     placeholder="Имя пользователя"
@@ -61,15 +53,13 @@ function Login() {
                 />
 
                 <button
-                    onClick={handleLogin}
+                    onClick={handleRegister}
                     disabled={isLoading}
-                    className="from-primary to-secondary w-full rounded-2xl bg-linear-to-r p-4 font-semibold transition-all hover:scale-[1.02] disabled:cursor-default disabled:opacity-50"
+                    className="from-primary to-secondary w-full rounded-2xl bg-linear-to-r p-4 font-semibold transition-all hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    {isLoading ? "Вход..." : "Войти"}
+                    {isLoading ? "Регистрация..." : "Зарегистрироваться"}
                 </button>
             </div>
         </div>
     );
 }
-
-export default Login;

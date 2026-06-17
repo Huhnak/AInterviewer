@@ -81,4 +81,12 @@ public class InterviewController : ApiControllerBase
             return BadRequest(result.Error);
         return Ok(result.Value);
     }
+    [HttpGet("interview-category/list")]
+    public async Task<ActionResult<List<Category>>> GetInterviewCategories(CancellationToken ct)
+    {
+        var result = await _interviewService.GetInterviewCategories(HttpContext, ct);
+        if (result.IsFailure)
+            return BadRequest(result.Error);
+        return Ok(result.Value);
+    }
 }

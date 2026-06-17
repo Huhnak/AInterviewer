@@ -5,8 +5,16 @@ public record UserRegisterDto(
     string Email,
     string Password
 );
-public record UserLoginDto(
+public record UserLoginRequestDto(
     string Username,
     string Password
 );
+public record UserLoginResponseDto(
+    string token,
+    Guid Id,
+    string Username,
+    string Email,
+    string RoleName
+);
+
 

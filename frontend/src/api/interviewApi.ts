@@ -2,7 +2,8 @@ import api from "./axios";
 import type {
     QuestionResponse,
     InterviewResult,
-    Interview
+    Interview,
+    Category
 } from "../types/interview";
 
 export const getQuestion = async (
@@ -70,5 +71,15 @@ export const finishInterview = async (
 export const getInterviewResults = async (
     interviewId: string): Promise<InterviewResult> => {
     const response = await api.get(`/api/interview/${interviewId}/result`);
+    return response.data;
+};
+export const getInterviews = async (): Promise<Interview[]> => {
+    const response = await api.get<Interview[]>(`/api/interview/list`);
+    return response.data;
+};
+export const getCategories = async (): Promise<Category[]> => {
+    const response = await api.get<Category[]>(
+        "/api/Interview/interview-category/list"
+    );
     return response.data;
 };

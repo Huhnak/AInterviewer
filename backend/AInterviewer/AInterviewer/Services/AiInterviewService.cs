@@ -67,31 +67,21 @@ public class AiInterviewService : IAiInterviewService
     public async Task<List<GeneratedQuestionDto>> GenerateQuestionsAsync(Interview interview, CancellationToken ct = default)
     {
         var prompt = $$"""
-        Ты технический интервьюер.
+        **Ты технический интервьюер.**
 
-        Позиция: {{interview.Category.Name}}
-        Описание позиции: {{interview.Category.InterviewPrompt}}
-        Общий уровень сложности интервью (1-100): {{interview.DifficultyLevel}}
+        **Позиция:** {{interview.Category.Name}}
+        **Описание позиции:** {{interview.Category.InterviewPrompt}}
+        **Общий уровень сложности интервью (1-100) это главный критерий для создания вопросов:** {{interview.DifficultyLevel}}
 
-        Сгенерируй {{interview.Category.MaxQuestions}} технических вопрос.
-
+        **Сгенерируй {{interview.Category.MaxQuestions}} технических вопрос.**
+        **Каждый вопрос должен соответствовать в первую очередь сложности интервью, а второрую сложности вопроса, 0 - самые базовые вопросы, 100 - самые сложные вопросы которые задают только самым сильным программистам на позицию senior**
         Ответ верни в JSON:
         [
             {
                 "topic": "",
                 "content": "",
-                "difficulty": 15
-            },
-            {
-                "topic": "",
-                "content": "",
-                "difficulty": 25
-            },
-            {
-                "topic": "",
-                "content": "",
-                "difficulty": 30
-            }
+                "difficulty": 0
+            }...
         ]
         """;
 
@@ -145,39 +135,30 @@ public class AiInterviewService : IAiInterviewService
         }
 
         var prompt = $$"""
-        Ты опытный технический интервьюер.
+        **Ты опытный технический интервьюер.**
 
-        Позиция: {{interview.Category.Name}}
-        Описание позиции: {{interview.Category.InterviewPrompt}}
-        Общий уровень сложности интервью (1-100): {{interview.DifficultyLevel}}
-        Рекомендации по оценке: {{interview.Category.EvaluationPrompt}}
+        **Позиция:** {{interview.Category.Name}}
+        **Описание позиции:** {{interview.Category.InterviewPrompt}}
+        **Общий уровень сложности интервью (1-100):** {{interview.DifficultyLevel}}
+        **Рекомендации по оценке:** {{interview.Category.EvaluationPrompt}}
 
-        Вопросы и ответы кандидата:
+        **Вопросы и ответы кандидата:**
         {{sb.ToString()}}
 
-        Оцени каждый ответ по шкале от 0 до 100.
-        Дай короткий отзыв по ответу.
+        **Оцени каждый ответ по шкале от 0 до 10.**
+        **Дай короткий отзыв по ответу.**
 
-        Верни JSON:
+        **Верни JSON:
         [
             {
                 "id": "",
                 "score": 0,
                 "feedback": ""
-            },
-            {
-                "id": "",
-                "score": 0,
-                "feedback": ""
-            },
-            {
-                "id": "",
-                "score": 0,
-                "feedback": ""
-            },
-        ]
+            },...
+        ]**
 
         """;
+        _logger.LogInformation(prompt);
         var response = await SendPromptAsync(
             prompt,
             ct);
@@ -194,20 +175,20 @@ public class AiInterviewService : IAiInterviewService
                 $"Question topic: {a.Question.Topic}\nQuestion content: {a.Question.Content}\nAnswer: {a.Content}\nScore: {a.Score}"));
 
         var prompt = $$"""
-        Проанализируй результаты интервью.
+        **Проанализируй результаты интервью.**
 
-        Позиция: {{interview.Category.Name}}
-        Описание позиции: {{interview.Category.InterviewPrompt}}
-        Общий уровень сложности интервью (1-100): {{interview.DifficultyLevel}}
-        Рекомендации по оценке: {{interview.Category.EvaluationPrompt}}
+        **Позиция:** {{interview.Category.Name}}
+        **Описание позиции:** {{interview.Category.InterviewPrompt}}
+        **Общий уровень сложности интервью (1-100):** {{interview.DifficultyLevel}}
+        **Рекомендации по оценке:** {{interview.Category.EvaluationPrompt}}
 
-        Ответы кандидата:
+        **Ответы кандидата:**
         {{answersText}}
 
 
 
 
-        Верни JSON:
+        **Верни JSON:
 
         {
             "recomendations": "",
@@ -216,8 +197,9 @@ public class AiInterviewService : IAiInterviewService
             "weaknesses": ""
         }
         recomendations - рекомендации по улучшению навыков кандидата.
-        level - предполагаемый уровень кандидата (Junior, Junior+, Middle, Middle+, Senior и тд., если уровень слишком низний то Begginer).
+        level - предполагаемый уровень кандидата (Junior, Junior+, Middle, Middle+, Senior и тд., если уровень слишком низний то Begginer).**
         """;
+        _logger.LogInformation(prompt);
         var response = await SendPromptAsync(
                 prompt,
                 ct);
@@ -225,7 +207,7 @@ public class AiInterviewService : IAiInterviewService
             response)!;
         result.TotalScore = totalScore;
         result.TotalAnswers = answers.Count();
-        result.CorrectAnswers = answers.Count(a => a.Score >= 60);
+        result.CorrectAnswers = answers.Count(a => a.Score >= 6);
         return result;
     }
 

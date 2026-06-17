@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+        <PackageReference Include="LogDashboard" Version="1.4.8" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
@@ -18,7 +19,10 @@
         <PackageReference Include="Microsoft.Extensions.AI" Version="10.6.0" />
         <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.6.0" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.2" />
+        <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.1" />
+        <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
+        <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.2" />
     </ItemGroup>
 
 </Project>

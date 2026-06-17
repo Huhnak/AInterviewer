@@ -45,13 +45,17 @@ public class AuthService : IAuthService
         return ApiResult.Success();
     }
 
-    public async Task<ApiResult<string>> LoginAsync(UserLoginDto user, CancellationToken ct)
+    public async Task<ApiResult<UserLoginResponseDto>> LoginAsync(UserLoginRequestDto user, CancellationToken ct)
     {
-        User? dbUser = await _context.Users.AsNoTracking().Include(u => u.Role).FirstOrDefaultAsync(u => u.Username == user.Username, ct);
+        User? dbUser = await _context.Users
+            .AsNoTracking()
+            .Include(u => u.Role)
+            .FirstOrDefaultAsync(u => u.Username == user.Username, ct);
         if(dbUser == null || !BCrypt.Net.BCrypt.Verify(user.Password, dbUser.PasswordHash))
-            return ApiResult<string>.Failure(new Error(400, "Wrong username or password.", ErrorType.Failure));
+            return ApiResult<UserLoginResponseDto>.Failure(new Error(400, "Wrong username or password.", ErrorType.Failure));
         string accessToken = CreateAccessToken(dbUser);
-        return ApiResult<string>.Success(accessToken);
+        var result = new UserLoginResponseDto(accessToken, dbUser.Id, dbUser.Username, dbUser.Email, dbUser.Role.Name);
+        return ApiResult<UserLoginResponseDto>.Success(result);
     }
 
 

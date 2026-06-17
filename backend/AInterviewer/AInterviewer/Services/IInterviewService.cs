@@ -14,4 +14,5 @@ public interface IInterviewService
     Task<ApiResult> StartInterviewAsync(Guid Id, HttpContext httpContext, CancellationToken ct);
     Task<ApiResult> FinishInterviewAsync(Guid Id, HttpContext httpContext, CancellationToken ct);
     Task<ApiResult<ResultDto>> InterviewResultAsync(Guid Id, HttpContext httpContext, CancellationToken ct);
+    Task<ApiResult<List<Category>>> GetInterviewCategories(HttpContext httpContext, CancellationToken ct);
 }

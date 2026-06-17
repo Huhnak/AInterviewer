@@ -1,10 +1,12 @@
 using AInterviewer.Data;
 using AInterviewer.Services;
+using LogDashboard;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
 using Microsoft.IdentityModel.Tokens;
 using OpenAI;
+using Serilog;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -66,8 +68,6 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IInterviewService, InterviewService>();
 builder.Services.AddScoped<IAiInterviewService, AiInterviewService>();
 
-
-
 builder.Services.AddSingleton<IChatClient>(sp =>
 {
     var httpClient = new HttpClient();
@@ -77,8 +77,6 @@ builder.Services.AddSingleton<IChatClient>(sp =>
         builder.Configuration["YandexGPT:ApiKey"]!,
         builder.Configuration["YandexGPT:FolderId"]!);
 });
-
-// =================================
 
 
 var app = builder.Build();
@@ -91,6 +89,7 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/openapi/v1.json", "AInterviewer API");
     });
 }
+
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

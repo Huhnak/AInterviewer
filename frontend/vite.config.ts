@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   server: {
     host: "0.0.0.0",
     // allowedHosts: [
@@ -20,8 +20,8 @@ export default defineConfig({
     // },
     proxy: {
       '/api': {
-        target: 'http://AInterviewer_backend:8080',
-        // target: 'http://localhost:8080',
+        // target: 'http://AInterviewer_backend:8080',
+        target: 'http://localhost:5092',
         changeOrigin: true,
         secure: false,
       },

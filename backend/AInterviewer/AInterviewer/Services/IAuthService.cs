@@ -5,5 +5,5 @@ namespace AInterviewer.Services;
 public interface IAuthService
 {
     Task<ApiResult> RegisterAsync(UserRegisterDto user, CancellationToken ct);
-    Task<ApiResult<string>> LoginAsync(UserLoginDto user, CancellationToken ct);
+    Task<ApiResult<UserLoginResponseDto>> LoginAsync(UserLoginRequestDto user, CancellationToken ct);
 }

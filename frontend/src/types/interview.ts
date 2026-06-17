@@ -3,12 +3,18 @@ export interface Interview {
   name: string;
   categoryName: string;
   difficultyLevel: number;
-  status: string;
+  createdAt: string;
+  status: InterviewStatus;
   score: number;
   currentQuestionIndex: number;
   maxQuestions: number;
 }
-
+export const InterviewStatus = {
+  InProgress: "InProgress",
+  Completed: "Completed",
+  NotStarted: "NotStarted"
+} as const;
+export type InterviewStatus = typeof InterviewStatus[keyof typeof InterviewStatus];
 export interface QuestionResponse {
   id: string;
   type: string;
@@ -32,4 +38,15 @@ export interface InterviewResult {
     strengths: string;
     weaknesses: string;
     recomendations: string;
+}
+export interface Category{
+    id: string;
+    name: string;
+    description: string;
+    interviewPrompt: string;
+    evaluationPrompt: string;
+    defaultDifficulty: number;
+    maxQuestions: number;
+    isActive: boolean;
+    createdAt: Date
 }
