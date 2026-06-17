@@ -1,6 +1,6 @@
 **/.vs
 backend/AInterviewer/AInterviewer/obj
-backend/AInterviewer/AInterviewer/appsettings.json
+backend/AInterviewer/AInterviewer/appsettings*
 compose.yaml
 **/bin
 *.zip
