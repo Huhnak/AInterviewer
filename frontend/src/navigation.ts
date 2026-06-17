@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard,
+  Home,
   PlusCircle,
   History,
   User,
@@ -9,7 +9,7 @@ export const navItems = [
   {
     title: "Home",
     path: "/home",
-    icon: LayoutDashboard,
+    icon: Home,
   },
   {
     title: "New Interview",
