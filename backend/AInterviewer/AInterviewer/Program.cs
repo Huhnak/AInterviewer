@@ -14,6 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+builder.Configuration.AddJsonFile(
+    "/run/secrets/backend_secrets",
+    optional: true,
+    reloadOnChange: false);
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,7 +52,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration["DefaultConnection:ConnectionString"]));
+    options.UseNpgsql(builder.Configuration["ConnectionString:DefaultConnection"]));
 
 builder.Services.AddCors(options => {
     options.AddPolicy("CorsPolicy", policy =>
