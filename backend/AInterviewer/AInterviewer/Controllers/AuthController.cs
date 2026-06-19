@@ -1,5 +1,5 @@
 ﻿using AInterviewer.DTOs;
-using AInterviewer.Services;
+using AInterviewer.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AInterviewer.Controllers;

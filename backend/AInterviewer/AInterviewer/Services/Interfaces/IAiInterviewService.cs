@@ -1,7 +1,7 @@
 ﻿using AInterviewer.DTOs;
 using AInterviewer.Models;
 
-namespace AInterviewer.Services;
+namespace AInterviewer.Services.Interfaces;
 
 public interface IAiInterviewService
 {

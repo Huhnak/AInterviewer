@@ -1,6 +1,7 @@
 ﻿using AInterviewer.Data;
 using AInterviewer.DTOs;
 using AInterviewer.Models;
+using AInterviewer.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

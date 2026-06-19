@@ -79,7 +79,7 @@ export const getInterviews = async (): Promise<Interview[]> => {
 };
 export const getCategories = async (): Promise<Category[]> => {
     const response = await api.get<Category[]>(
-        "/api/Interview/interview-category/list"
+        "/api/Interview/category/list"
     );
     return response.data;
 };

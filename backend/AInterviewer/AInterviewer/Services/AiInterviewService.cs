@@ -1,5 +1,6 @@
 ﻿using AInterviewer.DTOs;
 using AInterviewer.Models;
+using AInterviewer.Services.Interfaces;
 using Microsoft.Extensions.AI;
 using System.Text;
 using System.Text.Json;

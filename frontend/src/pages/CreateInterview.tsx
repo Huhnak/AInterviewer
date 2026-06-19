@@ -21,6 +21,7 @@ function CreateInterview() {
 
     useEffect(() => {
         getCategories().then((res) => {
+            res = res.filter((r) => r.isActive === true);
             setCategories(res);
             setCategoryName(res.at(0)?.name);
             setIsLoadingCategories(false);

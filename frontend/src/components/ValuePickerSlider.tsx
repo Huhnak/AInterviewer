@@ -1,5 +1,3 @@
-import { useThemeStore } from "../store/themeStore";
-
 interface ValuePickerSliderProps {
     value: number;
     onChange: (value: number) => void;
@@ -18,7 +16,6 @@ export default function ValuePickerSlider({
     max = 20,
     step = 1,
 }: ValuePickerSliderProps) {
-    const { isDarkMode } = useThemeStore();
     const progress = ((value - min) / (max - min)) * 100;
 
     return (
@@ -33,7 +30,7 @@ export default function ValuePickerSlider({
 
             <div className="relative">
                 <div
-                    className="bg-text absolute top-1/2 left-0 h-2 -translate-y-1/2 rounded-tl-full rounded-bl-full bg-gradient-to-r"
+                    className="bg-background pointer-events-none absolute top-[calc(60%)] left-0 z-1 h-2 -translate-y-1/2 rounded-tl-full rounded-bl-full bg-gradient-to-r"
                     style={{
                         width: `${progress}%`,
                     }}
@@ -46,7 +43,7 @@ export default function ValuePickerSlider({
                     step={step}
                     value={value}
                     onChange={(e) => onChange(Number(e.target.value))}
-                    className={`[&::-webkit-slider-thumb]:bg-${isDarkMode ? "text" : "primary"} [&::-moz-range-thumb]:bg-${isDarkMode ? "text" : "primary"} relative h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg`}
+                    className={`[&::-webkit-slider-thumb]:bg-background [&::-moz-range-thumb]:bg-background bg-background/30 relative h-2 w-full cursor-pointer appearance-none rounded-full [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg`}
                 />
             </div>
 

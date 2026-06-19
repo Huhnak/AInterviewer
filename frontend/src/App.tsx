@@ -13,6 +13,7 @@ import History from "./pages/History.tsx";
 import { useThemeStore } from "./store/themeStore.ts";
 import { useEffect } from "react";
 import Profile from "./pages/Profile.tsx";
+import AdminPanel from "./pages/AdminPanel.tsx";
 
 function App() {
     const isDarkMode = useThemeStore((state) => state.isDarkMode);
@@ -36,6 +37,7 @@ function App() {
                         <Route path="/result/:id" element={<Result />} />
                         <Route path="/history" element={<History />} />
                         <Route path="/profile" element={<Profile />} />
+                        <Route path="/admin-panel" element={<AdminPanel />} />
                     </Route>
                     <Route path="/login" element={<Login />} />
                 </Routes>

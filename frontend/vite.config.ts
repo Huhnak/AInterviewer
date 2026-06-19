@@ -20,7 +20,7 @@ export default defineConfig({
     // },
     proxy: {
       '/api': {
-        // target: 'http://AInterviewer_backend:8080',
+        // target: 'http://backend:8080',
         target: 'http://localhost:5092',
         changeOrigin: true,
         secure: false,

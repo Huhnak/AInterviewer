@@ -1,6 +1,7 @@
 ﻿using AInterviewer.Data;
 using AInterviewer.DTOs;
 using AInterviewer.Models;
+using AInterviewer.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -222,12 +223,6 @@ public class InterviewService : IInterviewService
         if (interviewDto == null)
             return ApiResult<InterviewDto>.Failure(new Error(400, "No such interview or not your interview.", ErrorType.Failure));
         return ApiResult<InterviewDto>.Success(interviewDto);
-    }
-
-    public async Task<ApiResult<List<Category>>> GetInterviewCategories(HttpContext httpContext, CancellationToken ct)
-    {
-        var result = await _context.Categories.ToListAsync(ct);
-        return ApiResult<List<Category>>.Success(result);
     }
 
     public async Task<ApiResult<List<InterviewDto>>> GetMyInterviewsAsync(HttpContext httpContext, CancellationToken ct)

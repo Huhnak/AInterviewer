@@ -1,6 +1,6 @@
 ﻿using AInterviewer.DTOs;
 
-namespace AInterviewer.Services;
+namespace AInterviewer.Services.Interfaces;
 
 public interface IAuthService
 {

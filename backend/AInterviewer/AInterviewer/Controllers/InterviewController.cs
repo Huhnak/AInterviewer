@@ -1,6 +1,7 @@
 ﻿using AInterviewer.DTOs;
 using AInterviewer.Models;
 using AInterviewer.Services;
+using AInterviewer.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,11 @@ namespace AInterviewer.Controllers;
 public class InterviewController : ApiControllerBase
 {
     private readonly IInterviewService _interviewService;
-    public InterviewController(IInterviewService interviewService)
+    private readonly IFooService _fooService;
+    public InterviewController(IInterviewService interviewService, IFooService fooService)
     {
         _interviewService = interviewService;
+        _fooService = fooService;
     }
     [HttpPost("create")]
     public async Task<ActionResult<Guid>> Create([FromBody] InterviewCreateRequest request, CancellationToken ct)
@@ -81,10 +84,10 @@ public class InterviewController : ApiControllerBase
             return BadRequest(result.Error);
         return Ok(result.Value);
     }
-    [HttpGet("interview-category/list")]
-    public async Task<ActionResult<List<Category>>> GetInterviewCategories(CancellationToken ct)
+    [HttpGet("category/list")]
+    public async Task<ActionResult<List<CategoryDto>>> GetCategories(CancellationToken ct)
     {
-        var result = await _interviewService.GetInterviewCategories(HttpContext, ct);
+        var result = await _fooService.GetInterviewCategoriesAsync(HttpContext, ct);
         if (result.IsFailure)
             return BadRequest(result.Error);
         return Ok(result.Value);
