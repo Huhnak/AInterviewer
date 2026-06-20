@@ -67,6 +67,14 @@ function Login() {
                 >
                     {isLoading ? "Вход..." : "Войти"}
                 </button>
+                <p
+                    onClick={() => {
+                        navigate("/register");
+                    }}
+                    className="text-muted w-full cursor-pointer p-4 text-center transition-all hover:scale-[1.02]"
+                >
+                    Нет аккаунта?
+                </p>
             </div>
         </div>
     );

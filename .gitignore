@@ -6,3 +6,4 @@ compose.yaml
 *.zip
 /frontend2
 backend_secrets.txt
+backend_secrets_render.txt

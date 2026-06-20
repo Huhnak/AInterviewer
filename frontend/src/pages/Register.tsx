@@ -59,6 +59,14 @@ export default function Register() {
                 >
                     {isLoading ? "Регистрация..." : "Зарегистрироваться"}
                 </button>
+                <p
+                    onClick={() => {
+                        navigate("/login");
+                    }}
+                    className="text-muted w-full cursor-pointer p-4 text-center transition-all hover:scale-[1.02]"
+                >
+                    Уже есть аккаунт?
+                </p>
             </div>
         </div>
     );

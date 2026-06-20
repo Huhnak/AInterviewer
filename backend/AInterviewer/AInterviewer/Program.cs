@@ -3,6 +3,7 @@ using AInterviewer.Services;
 using AInterviewer.Services.Interfaces;
 using LogDashboard;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
 using Microsoft.IdentityModel.Tokens;
@@ -20,7 +21,10 @@ builder.Configuration.AddJsonFile(
     "/run/secrets/backend_secrets",
     optional: true,
     reloadOnChange: false);
-
+builder.Configuration.AddJsonFile(
+    "/etc/secrets/backend_secrets",
+    optional: true,
+    reloadOnChange: false);
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -31,8 +35,8 @@ builder.Services.AddAuthentication(options =>
     {
         RoleClaimType = ClaimTypes.Role,
         NameClaimType = ClaimTypes.Name,
-        ValidateIssuer = true,
-        ValidateAudience = true,
+        ValidateIssuer = false,
+        ValidateAudience = false,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
@@ -66,11 +70,21 @@ builder.Services.AddCors(options => {
                 "https://localhost:12117",
                 "http://localhost:8080",
                 "https://localhost:8080",
-                "https://ainterviewer.creanima.ra")
+                "https://ainterviewer-s5ab.onrender.com",
+                "https://ainterviewer.creanima.ru")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
     });
+});
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
+
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -90,7 +104,8 @@ builder.Services.AddSingleton<IChatClient>(sp =>
 
 
 var app = builder.Build();
-
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Add($"http://0.0.0.0:{port}");
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -100,8 +115,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-
-app.UseHttpsRedirection();
+app.UseForwardedHeaders();
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

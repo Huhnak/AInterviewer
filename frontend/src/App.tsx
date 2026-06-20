@@ -30,7 +30,6 @@ function App() {
                             index
                             element={<Navigate to="/home" replace />}
                         />
-                        <Route path="/register" element={<Register />} />
                         <Route path="/home" element={<Home />} />
                         <Route path="/create" element={<CreateInterview />} />
                         <Route path="/interview/:id" element={<Interview />} />
@@ -39,6 +38,7 @@ function App() {
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/admin-panel" element={<AdminPanel />} />
                     </Route>
+                    <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
                 </Routes>
             </BaseLayout>

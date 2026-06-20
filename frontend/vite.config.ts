@@ -6,31 +6,33 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    host: "0.0.0.0",
+    host: true,
+    allowedHosts: true,
     // allowedHosts: [
     //   'ainterviewer.creanima.ru',
+    //   'frontend-bbon.onrender.com',
     //   'localhost',
     // ],
-    watch: {
-      usePolling: true,
-    },
+    // watch: {
+    //   usePolling: true,
+    // },
     // cors: {
     //   origin: ['https://ainterviewer.creanima.ru'],
     //   credentials: true,
     // },
-    proxy: {
-      '/api': {
-        // target: 'http://backend:8080',
-        target: 'http://localhost:5092',
-        changeOrigin: true,
-        secure: false,
-      },
-      // '/hubs': {
-      //   target: 'http://AInterviewer_backend:8080',
-      //   ws: true,
-      //   changeOrigin: true,
-      //   secure: false,
-      // }
-    }
+    // proxy: {
+    //   '/api': {
+    //     target: 'http://backend:8080',
+    //     // target: 'http://localhost:5092',
+    //     changeOrigin: true,
+    //     secure: false,
+    //   },
+    //   // '/hubs': {
+    //   //   target: 'http://AInterviewer_backend:8080',
+    //   //   ws: true,
+    //   //   changeOrigin: true,
+    //   //   secure: false,
+    //   // }
+    // }
   }
 })

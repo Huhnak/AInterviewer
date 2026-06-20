@@ -50,7 +50,8 @@ export default function ChatMessage({ message }: Props) {
                     isUser
                         ? "bg-card rounded-bl-4xl border border-white/10"
                         : "bg-card rounded-br-4xl border border-white/10"
-                } `}
+                }`}
+                style={{ whiteSpace: "pre-line" }}
             >
                 {message.content}
             </div>
