@@ -14,12 +14,14 @@ import { useThemeStore } from "./store/themeStore.ts";
 import { useEffect } from "react";
 import Profile from "./pages/Profile.tsx";
 import AdminPanel from "./pages/AdminPanel.tsx";
+import { useAuthStore } from "./store/userStore.ts";
 
 function App() {
     const isDarkMode = useThemeStore((state) => state.isDarkMode);
     useEffect(() => {
         document.documentElement.classList.toggle("dark", isDarkMode);
     }, [isDarkMode]);
+    const { user } = useAuthStore();
     return (
         <div className="bg-background text-text min-h-screen">
             <Navbar />
@@ -36,7 +38,12 @@ function App() {
                         <Route path="/result/:id" element={<Result />} />
                         <Route path="/history" element={<History />} />
                         <Route path="/profile" element={<Profile />} />
-                        <Route path="/admin-panel" element={<AdminPanel />} />
+                        {user?.roleName === "Admin" && (
+                            <Route
+                                path="/admin-panel"
+                                element={<AdminPanel />}
+                            />
+                        )}
                     </Route>
                     <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
