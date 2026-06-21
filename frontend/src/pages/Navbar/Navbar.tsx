@@ -12,6 +12,7 @@ export default function Navbar() {
     const { isDarkMode } = useThemeStore();
     const { logout } = useAuthStore();
     const navigate = useNavigate();
+    const { user } = useAuthStore();
 
     const handleLogout = () => {
         logout();
@@ -49,28 +50,34 @@ export default function Navbar() {
                 </NavLink>
 
                 <nav className="flex gap-2">
-                    {navItems.map((item) => {
-                        const Icon = item.icon;
+                    {navItems
+                        .filter(
+                            (i) =>
+                                i.title !== "AdminPanel" ||
+                                user?.roleName === "Admin",
+                        )
+                        .map((item) => {
+                            const Icon = item.icon;
 
-                        return (
-                            <NavLink
-                                key={item.path}
-                                to={item.path}
-                                className={({ isActive }) =>
-                                    `flex items-center gap-2 rounded-xl px-4 py-2 transition-all duration-200 ${
-                                        isActive
-                                            ? isDarkMode
-                                                ? "bg-primary text-white"
-                                                : "bg-background text-white"
-                                            : "text-muted hover:bg-white/5 hover:text-white"
-                                    } `
-                                }
-                            >
-                                <Icon size={18} />
-                                <span>{item.title}</span>
-                            </NavLink>
-                        );
-                    })}
+                            return (
+                                <NavLink
+                                    key={item.path}
+                                    to={item.path}
+                                    className={({ isActive }) =>
+                                        `flex items-center gap-2 rounded-xl px-4 py-2 transition-all duration-200 ${
+                                            isActive
+                                                ? isDarkMode
+                                                    ? "bg-primary text-white"
+                                                    : "bg-background text-white"
+                                                : "text-muted hover:bg-white/5 hover:text-white"
+                                        } `
+                                    }
+                                >
+                                    <Icon size={18} />
+                                    <span>{item.title}</span>
+                                </NavLink>
+                            );
+                        })}
 
                     <div
                         className="text-muted flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 transition-all duration-200 hover:bg-red-500/25"
