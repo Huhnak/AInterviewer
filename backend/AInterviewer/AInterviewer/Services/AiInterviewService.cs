@@ -132,19 +132,21 @@ public class AiInterviewService : IAiInterviewService
         var sb = new StringBuilder();
         foreach (var qa in questionsAnswers)
         {
-            sb.AppendLine($"Question id: {qa.Key.Id}\nQuestion topic: {qa.Key.Topic}\nQuestion content: {qa.Key.Content}\nQuestion difficulty: {qa.Key.Difficulty}\nAnswer: {qa.Value}\n");
+            sb.AppendLine($"Question id: {qa.Key.Id}\nQuestion topic: {qa.Key.Topic}\nQuestion content: {qa.Key.Content}\nQuestion difficulty: {qa.Key.Difficulty}\nUser answer: {qa.Value}\n");
         }
 
         var prompt = $$"""
         **Ты опытный технический интервьюер.**
 
         **Позиция:** {{interview.Category.Name}}
-        **Описание позиции:** {{interview.Category.InterviewPrompt}}
         **Общий уровень сложности интервью (1-100):** {{interview.DifficultyLevel}}
         **Рекомендации по оценке:** {{interview.Category.EvaluationPrompt}}
 
-        **Вопросы и ответы кандидата:**
+        **Твоя задача оценить качество ответа User answer на вопрос Question content**
+        **Начало блока "Вопросы и ответы кандидата":**
         {{sb.ToString()}}
+
+        **Конец блока "Вопросы и ответы кандидата":**
 
         **Оцени каждый ответ по шкале от 0 до 10.**
         **Дай короткий отзыв по ответу.**
@@ -173,20 +175,18 @@ public class AiInterviewService : IAiInterviewService
         var answersText = string.Join(
             "\n",
             answers.Select(a =>
-                $"Question topic: {a.Question.Topic}\nQuestion content: {a.Question.Content}\nAnswer: {a.Content}\nScore: {a.Score}"));
+                $"Question topic: {a.Question.Topic}\nQuestion content: {a.Question.Content}\nUser answer: {a.Content}\nScore: {a.Score}"));
 
         var prompt = $$"""
         **Проанализируй результаты интервью.**
 
         **Позиция:** {{interview.Category.Name}}
-        **Описание позиции:** {{interview.Category.InterviewPrompt}}
         **Общий уровень сложности интервью (1-100):** {{interview.DifficultyLevel}}
         **Рекомендации по оценке:** {{interview.Category.EvaluationPrompt}}
 
-        **Ответы кандидата:**
+        **Начало блока "ответы кандидата":**
         {{answersText}}
-
-
+        **Конец блока "ответы кандидата":**
 
 
         **Верни JSON:

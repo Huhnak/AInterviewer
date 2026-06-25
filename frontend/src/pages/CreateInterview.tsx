@@ -71,12 +71,12 @@ function CreateInterview() {
                         </select>
                     </div>
                     {categoryName != "" && (
-                        <div className="rounded-2xl bg-black/20 p-4">
+                        <div className="bg-card/60 rounded-3xl border border-white/10 p-6 shadow-xl backdrop-blur-xl">
                             <label className="text-muted mb-2 block text-sm font-medium">
                                 Описание собеседования
                             </label>
 
-                            <div className="bg-surface focus:border-primary w-full rounded-2xl border border-white/10 px-4 py-3 outline-none">
+                            <div className="w-full rounded-2xl py-3 outline-none">
                                 {
                                     categories?.find(
                                         (c) => c.name === categoryName,
