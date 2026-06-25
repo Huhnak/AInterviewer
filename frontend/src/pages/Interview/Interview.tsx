@@ -91,10 +91,6 @@ export default function Interview() {
         ]);
 
         setAnswer("");
-        if (currentQuestionIndex === maxQuestions) {
-            await handleFinishInterview();
-            return;
-        }
         if (isInterviewTimeOut()) {
             await handleFinishInterview();
             return;
@@ -102,6 +98,10 @@ export default function Interview() {
         await submitAnswer(id, questionId, currentAnswer).catch((err) => {
             console.log(err);
         });
+        if (currentQuestionIndex >= maxQuestions) {
+            await handleFinishInterview();
+            return;
+        }
 
         await loadQuestion();
     };
