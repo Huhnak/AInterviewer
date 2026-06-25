@@ -130,15 +130,15 @@ export default function History() {
                             </div>
 
                             <div className="mt-6 flex items-center justify-between">
-                                <div>
-                                    <span className="text-3xl font-bold">
+                                <div className="flex flex-col gap-2.5">
+                                    <span className="text-4xl font-bold">
                                         {interview.categoryName}
                                     </span>
                                     {interview.score !== null && (
-                                        <span className="text-3xl font-bold">
+                                        <span className="text-3xl">
                                             Оценка:{" "}
                                             <span
-                                                className={`${getScoreColor(interview.score)} text-3xl font-bold`}
+                                                className={`${getScoreColor(interview.score)} text-3xl`}
                                             >
                                                 {interview.score} / 100
                                             </span>
