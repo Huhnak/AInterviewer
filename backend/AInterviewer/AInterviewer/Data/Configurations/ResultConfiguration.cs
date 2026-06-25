@@ -22,7 +22,6 @@ public class ResultConfiguration : IEntityTypeConfiguration<Result>
         builder.Property(r => r.Recomendations);
         builder.HasOne(r => r.Interview)
             .WithOne(i => i.Result)
-            .HasForeignKey<Result>(r => r.InterviewId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey<Result>(r => r.InterviewId);
     }
 }

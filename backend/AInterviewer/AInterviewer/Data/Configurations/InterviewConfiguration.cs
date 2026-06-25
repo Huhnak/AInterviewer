@@ -31,11 +31,17 @@ public class InterviewConfiguration : IEntityTypeConfiguration<Interview>
 
         builder.HasOne(i => i.User)
             .WithMany(u => u.Interviews)
-            .HasForeignKey(u => u.UserId)
+            .HasForeignKey(i => i.UserId)
             .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(i => i.Category)
             .WithMany()
             .HasForeignKey(i => i.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(i => i.Result)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(i => i.Questions)
+            .WithOne(q => q.Interview)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

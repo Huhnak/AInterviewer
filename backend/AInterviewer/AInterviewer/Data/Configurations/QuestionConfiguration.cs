@@ -31,12 +31,11 @@ public class QuestionConfiguration : IEntityTypeConfiguration<Question>
             .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(q => q.Interview)
             .WithMany(i => i.Questions)
-            .HasForeignKey(q => q.InterviewId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(q => q.InterviewId);
         builder.HasOne(q => q.Answer)
             .WithOne(a => a.Question)
             .HasForeignKey<Answer>(a => a.QuestionId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
         
     }
 }

@@ -20,7 +20,6 @@ public class AnswerConfiguration : IEntityTypeConfiguration<Answer>
 
         builder.HasOne(a => a.Question)
             .WithOne(r => r.Answer)
-            .HasForeignKey<Answer>(a=>a.QuestionId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey<Answer>(a => a.QuestionId);
     }
 }
