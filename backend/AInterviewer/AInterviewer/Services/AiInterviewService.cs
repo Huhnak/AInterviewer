@@ -169,7 +169,7 @@ public class AiInterviewService : IAiInterviewService
     }
     public async Task<InterviewResultDto> GenerateResultAsync(Interview interview, IEnumerable<Answer> answers, CancellationToken ct = default)
     {
-        var totalScore = answers.Sum(a => a.Score);
+        var totalScore = (int)Math.Ceiling(answers.Sum(a => a.Score) / (float)(interview.Category.MaxQuestions * 10) * 100);
         var answersText = string.Join(
             "\n",
             answers.Select(a =>

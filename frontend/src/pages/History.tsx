@@ -131,6 +131,9 @@ export default function History() {
 
                             <div className="mt-6 flex items-center justify-between">
                                 <div>
+                                    <span className="text-3xl font-bold">
+                                        {interview.categoryName}
+                                    </span>
                                     {interview.score !== null && (
                                         <span className="text-3xl font-bold">
                                             Оценка:{" "}

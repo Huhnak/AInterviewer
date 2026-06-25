@@ -91,7 +91,7 @@ export default function Interview() {
         ]);
 
         setAnswer("");
-        if (currentQuestionIndex >= maxQuestions) {
+        if (currentQuestionIndex === maxQuestions) {
             await handleFinishInterview();
             return;
         }
