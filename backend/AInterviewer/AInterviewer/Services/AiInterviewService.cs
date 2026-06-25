@@ -149,6 +149,7 @@ public class AiInterviewService : IAiInterviewService
         **Конец блока "Вопросы и ответы кандидата":**
 
         **Оцени каждый ответ по шкале от 0 до 10.**
+        **Оценивай строго, за полный хороший ответ ставь 10, за ужасный или бессмысленный 0, промежуточные значения ставь по своему усмотрению**
         **Дай короткий отзыв по ответу.**
 
         **Верни JSON:
@@ -183,7 +184,6 @@ public class AiInterviewService : IAiInterviewService
         **Позиция:** {{interview.Category.Name}}
         **Общий уровень сложности интервью (1-100):** {{interview.DifficultyLevel}}
         **Рекомендации по оценке:** {{interview.Category.EvaluationPrompt}}
-
         **Начало блока "ответы кандидата":**
         {{answersText}}
         **Конец блока "ответы кандидата":**
